@@ -133,7 +133,7 @@ else:
     print "5、读取特征值文件耗时：" + str(round(time.time() - ss,2)) + "s"
 
 print "6、预测测试结果"
-normal = startRoundPredict(sample,label,algo,30,np.array(test_dataSet))
+normal = startRoundPredict(sample,label,algo,10,np.array(test_dataSet))
 for k in range(len(row_index)):
     result_label[row_index[k]] = normal[k]
 # print "预测字典:",result_label
