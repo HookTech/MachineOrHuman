@@ -78,6 +78,12 @@ badPointValue = 99999999
 speedFactory = 1000#毫秒
 angleFactory = 100
 
+'''
+getFeatures
+===
+    得到numpy的X轴偏差百分比、速度集信息、角度偏差信息
+    共21维度的信息
+'''
 def getFeatures(rawString):
     speedSet = []
     src = map(lambda x:float(x),rawString.split(","))

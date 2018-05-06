@@ -34,7 +34,7 @@ param_dist={"max_depth":[3,None],
             "bootstrap":[True,False],
             "criterion":['gini','entropy']
             }
-n_iter_search=20
+n_iter_search=10
 algo = RandomizedSearchCV(RandomForestClassifier(n_estimators=20),param_distributions=param_dist,n_iter=n_iter_search)
 
 def dealNoneStr(ss=''):
