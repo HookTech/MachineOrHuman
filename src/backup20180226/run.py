@@ -5,16 +5,11 @@ import time
 from scipy.stats import randint as sp_randint
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import RandomizedSearchCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.pipeline import Pipeline
 
 from src.backup20180226.func import *
-
-rootPath = "/Users/philo/Desktop/playground/"
-
-train_file_path = rootPath + "train.csv"
-train_cache_features_path = rootPath + "train_features.txt"
-test_file_path = rootPath + "test.csv"
-test_cache_features_path = rootPath + "test_features.txt"
-predict_file_path = rootPath + "test_predict.csv"
 
 #尝试的算法
 # parameters = {
@@ -35,7 +30,8 @@ param_dist={"max_depth":[3,None],
             "criterion":['gini','entropy']
             }
 n_iter_search=10
-algo = RandomizedSearchCV(RandomForestClassifier(n_estimators=20),param_distributions=param_dist,n_iter=n_iter_search)
+# algo = RandomizedSearchCV(RandomForestClassifier(n_estimators=20), param_distributions=param_dist, n_iter=n_iter_search)
+algo = Pipeline([('pca', PCA()), ('clf', RandomForestClassifier(n_estimators=20))])
 
 def dealNoneStr(ss=''):
     if ss is None or ss.strip() == '' or ss.strip() == '(null)' or ss.strip() == 'null':
@@ -96,6 +92,10 @@ print "样本标签长度:",len(label)
 
 print "3、*实验方法效果"
 # startTrainingTest(sample,label,algo,3)
+# print "学习曲线绘制"
+# draw_learn_curve(algorithm=algo, params=[], X_train=sample, y_train=label)
+print "验证曲线绘制"
+draw_validation_curve(algorithm=algo, param_name='clf__max_depth', param_range=range(3, 20), X_train=sample, y_train=label)
 
 result_label = {}
 row_index = []
@@ -152,6 +152,8 @@ with open(predict_file_path,'w') as pfp:
     for index in machine_index:
         pfp.write(testFile[index + 1].strip().split("\t")[0])
         pfp.write("\n")
+
+
 # #可视化
 # import matplotlib
 # import matplotlib.pyplot as plt
