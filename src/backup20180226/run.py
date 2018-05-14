@@ -94,8 +94,15 @@ print "3、*实验方法效果"
 # startTrainingTest(sample,label,algo,3)
 # print "学习曲线绘制"
 # draw_learn_curve(algorithm=algo, params=[], X_train=sample, y_train=label)
-print "验证曲线绘制"
-draw_validation_curve(algorithm=algo, param_name='clf__max_depth', param_range=range(3, 20), X_train=sample, y_train=label)
+# print "验证曲线绘制"
+# draw_validation_curve(algorithm=algo, param_name='clf__max_depth', param_range=range(3, 20), X_train=sample, y_train=label)
+print "ROC绘制"
+mix_train, mix_cv, mix_test = shuffle_and_split_train_data(sample, label)
+algo.fit(mix_train[:, 0:-1], mix_train[:, -1])
+cv_predictions_label = algo.predict(mix_cv[:, 0:-1])
+cv_label = mix_cv[:, -1]
+plot_roc(test_labels=cv_label, test_predictions=cv_predictions_label)
+
 
 result_label = {}
 row_index = []

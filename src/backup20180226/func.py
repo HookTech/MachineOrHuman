@@ -3,10 +3,34 @@ __author__ = 'philo'
 import time
 import numpy as np
 import matplotlib.pyplot as plt
+from random import shuffle
 
 from sklearn.model_selection import learning_curve
 from sklearn.model_selection import ShuffleSplit
 from sklearn.model_selection import validation_curve
+from sklearn.metrics import roc_curve
+from sklearn.metrics import auc
+
+
+def shuffle_and_split_train_data(train_data, label):
+    """
+    shuffle and split data
+    :param train_data: train data
+    :param label: train class label
+    :return: train data, cross-validation data, test data
+    """
+    if type(train_data) != np.ndarray or type(label) != np.ndarray:
+        raise "type error"
+    rows1, cols1 = train_data.shape
+    label = label.reshape(len(label), 1)
+    rows2, cols2 = label.shape
+    if rows1 != rows2:
+        raise "dimension error"
+    mix_data = np.hstack((train_data, label))
+    shuffle(mix_data)
+    train_split_point = int(rows1 * 0.6)
+    cv_split_point = int(rows1 * 0.8)
+    return mix_data[0:train_split_point], mix_data[train_split_point:cv_split_point], mix_data[cv_split_point:rows1 + 1]
 
 
 def startRoundPredict(train_dataSet, train_label, algorithm, round_count, test_dataSet):
@@ -122,7 +146,32 @@ def draw_validation_curve(algorithm, param_name, param_range, X_train, y_train):
     plt.legend(loc='lower right')
     plt.ylim([0.8, 1.0])
     plt.show()
+    # plt.savefig(rootPath + "validation_curve.pdf", format('pdf'))
     plt.close()
+
+
+def plot_roc(test_labels, test_predictions):
+    """
+    绘制ROC曲线，评估分类器的效果
+    :param test_labels:
+    :param test_predictions:
+    :return:
+    """
+    fpr, tpr, thresholds = roc_curve(test_labels, test_predictions, pos_label=1)
+    aucmx = "%.2f" % auc(fpr, tpr)
+    title = 'ROC Curve, AUC = ' + str(aucmx)
+    with plt.style.context(('ggplot')):
+        fig, ax = plt.subplots()
+        ax.plot(fpr, tpr, "#000099", label='ROC curve')
+        ax.plot([0, 1], [0, 1], 'k--', label='Baseline')
+        plt.xlim([0.0, 1.0])
+        plt.ylim([0.0, 1.05])
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.legend(loc='lower right')
+        plt.title(title)
+        plt.show()
+    return fig
 
 
 def startRoundTrain(train_sample, train_label, round_count, algorithm, is_test=False):
@@ -159,7 +208,6 @@ def startRoundTrain(train_sample, train_label, round_count, algorithm, is_test=F
 badPointValue = 99999999
 speedFactory = 1000  # 毫秒
 angleFactory = 100
-
 
 rootPath = "/Users/philo/Desktop/playground/"
 
@@ -233,7 +281,6 @@ def getFeatures(rawString):
     sample.append(np.var(angleSet))  # ["angle_var"] =
     # print sample.values()
     return np.array(sample)
-
 
 
 def selfEval(clf, X, Y):
