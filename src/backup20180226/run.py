@@ -38,6 +38,8 @@ def dealNoneStr(ss=''):
         return 'Unknown'
     else:
         return ss
+
+
 print "1、读取训练文件，预处理内核和设备信息"
 device_map = {}
 browser_map = {"Unknown": 0}
