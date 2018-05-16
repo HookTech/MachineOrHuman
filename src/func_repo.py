@@ -39,6 +39,7 @@ def shuffle_and_split_train_data(train_data, label):
 def draw_learn_curve(algorithm, params, X_train, y_train):
     """
     draw learn curve
+    绘制学习曲线
     :param algorithm:
     :param params:
     :param complete_train_set:
@@ -58,7 +59,7 @@ def draw_learn_curve(algorithm, params, X_train, y_train):
     test_scores_mean = np.mean(test_scores, axis=1)
     test_scores_std = np.std(test_scores, axis=1)
     # 绘制效果
-    plt.figure()
+    plt.figure("learn curve")
     plt.grid()
 
     plt.fill_between(train_sizes, train_scores_mean - train_scores_std,
@@ -72,7 +73,9 @@ def draw_learn_curve(algorithm, params, X_train, y_train):
              label="Cross-validation score")
 
     plt.legend(loc="best")
-    plt.show()
+    plt.xlabel("train set size")
+    plt.ylabel("score")
+    plt.savefig(rootPath + "learn curve")
     plt.close()
 
 
