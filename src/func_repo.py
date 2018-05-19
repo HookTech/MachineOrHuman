@@ -36,14 +36,14 @@ def shuffle_and_split_train_data(train_data, label):
     return mix_data[0:train_split_point], mix_data[train_split_point:cv_split_point], mix_data[cv_split_point:rows1 + 1]
 
 
-def draw_learn_curve(algorithm, params, X_train, y_train):
+def draw_learn_curve(algorithm, pic_path, X_train, y_train):
     """
     draw learn curve
     绘制学习曲线
     :param algorithm:
-    :param params:
-    :param complete_train_set:
-    :param complete_cv_set:
+    :param pic_path: 图画保存路径
+    :param X_train: 训练数据集
+    :param y_train: 训练标签集
     :return:
     """
     # call function to check args here
@@ -75,14 +75,15 @@ def draw_learn_curve(algorithm, params, X_train, y_train):
     plt.legend(loc="best")
     plt.xlabel("train set size")
     plt.ylabel("score")
-    plt.savefig(rootPath + "learn curve")
+    plt.savefig(pic_path)
     plt.close()
 
 
-def draw_validation_curve(algorithm, param_name, param_range, X_train, y_train):
+def draw_validation_curve(algorithm, pic_path ,param_name, param_range, X_train, y_train):
     """
     参数化验证曲线
     :param algorithm:
+    :param pic_path:
     :param X_train:
     :param y_train:
     :return:
@@ -96,7 +97,7 @@ def draw_validation_curve(algorithm, param_name, param_range, X_train, y_train):
     test_mean = np.mean(test_scores, axis=1)
     test_std = np.std(test_scores, axis=1)
     # 绘制效果
-    plt.figure()
+    plt.figure("validation curve")
     plt.grid()
     plt.plot(param_range, train_mean, color='blue', marker='o', markersize=5, label='training accuracy')
     plt.fill_between(param_range, train_mean + train_std, train_mean - train_std, alpha=0.15, color='blue')
@@ -106,15 +107,14 @@ def draw_validation_curve(algorithm, param_name, param_range, X_train, y_train):
     plt.xlabel('Parameter max_length')
     plt.ylabel('Validation score')
     plt.legend(loc='lower right')
-    plt.ylim([0.8, 1.0])
-    plt.show()
-    # plt.savefig(rootPath + "validation_curve.pdf", format('pdf'))
+    plt.savefig(pic_path)
     plt.close()
 
 
-def draw_roc_curve(test_labels, test_predictions):
+def draw_roc_curve(pic_path, test_labels, test_predictions):
     """
     绘制ROC曲线，评估分类器的效果
+    :param pic_path
     :param test_labels:
     :param test_predictions:
     :return:
@@ -132,7 +132,7 @@ def draw_roc_curve(test_labels, test_predictions):
         plt.ylabel('True Positive Rate')
         plt.legend(loc='lower right')
         plt.title(title)
-        plt.show()
+        plt.savefig(pic_path)
     return fig
 
 
@@ -172,11 +172,12 @@ def get_format_train_data_set_and_classify_label(train_file_path, train_cache_fe
         if core not in browser_map:
             browser_map[core] = num * 10000
             num += 1
-
+    '''
     print 'device type map(type -> code):'
     print device_map
     print 'browser core type map(type -> code):'
     print browser_map
+    '''
     sample = []
     label = []
     if os.path.exists(train_cache_features_path) == False or os.path.getsize(train_cache_features_path) == 0:
@@ -243,7 +244,7 @@ def read_to_be_predicted_file(test_file_path):
                 test_dataSet.append(row.tolist())
             else:
                 result_label[i] = 0
-    return np.array(test_dataSet), np.array(result_label)
+    return np.array(test_dataSet), np.array(result_label), np.array(row_index)
 
 
 def get_features(raw_string):
